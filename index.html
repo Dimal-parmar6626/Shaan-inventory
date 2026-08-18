@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Inventory - Login</title>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <img src="/assets/logo/logo.png" alt="Shaan Cinema Logo" class="auth-logo-img">
+        </div>
+
+        <h1 class="auth-title"> Inventory</h1>
+        <p class="auth-subtitle">Management System</p>
+
+        <div id="authError" class="auth-error"></div>
+
+        <form id="loginForm" class="auth-form">
+
+            <div class="form-group">
+                <label class="form-label" for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    class="form-control"
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="width: 100%;"
+            >
+                Sign In
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            <p>Contact administrator for account access</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script src="firebase-config.js"></script>
+
+<script src="js/auth.js"></script>
+
+<script>
+(function restoreLoginSession() {
+    authService.onAuthStateChange(async (user) => {
+        if (!user) return;
+        try {
+            const profile = await authService.getCurrentProfile();
+            if (!profile || profile.active === false) return;
+
+            if (profile.role === 'admin') {
+                window.location.replace('admin/dashboard.html');
+            } else if (profile.role === 'employee') {
+                window.location.replace('employee/dashboard.html');
+            }
+        } catch (error) {
+            console.error('Session restore error:', error);
+        }
+    });
+})();
+</script>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const errorDiv = document.getElementById('authError');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+
+    errorDiv.classList.remove('show');
+    errorDiv.textContent = '';
+
+    if (!email || !password) {
+        errorDiv.textContent = 'Please enter email and password';
+        errorDiv.classList.add('show');
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in...';
+
+    try {
+
+        await authService.signIn(email, password);
+
+
+    } catch (error) {
+
+        errorDiv.textContent = error.message;
+        errorDiv.classList.add('show');
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+    }
+
+});
+</script>
+
+</body>
+</html>

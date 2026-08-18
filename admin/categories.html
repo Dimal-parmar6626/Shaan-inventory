@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Store Inventory</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <div class="layout">
+        
+        <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📦</div>
+                <div class="sidebar-title">Inventory System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span> Products
+                </a>
+                <a href="categories.html" class="nav-item active">
+                    <span class="nav-icon">🏷️</span> Categories
+                </a>
+                <a href="stock-in.html" class="nav-item">
+                    <span class="nav-icon">📥</span> Stock In
+                </a>
+                <a href="stock-out.html" class="nav-item">
+                    <span class="nav-icon">📤</span> Stock Out
+                </a>
+                <a href="inventory.html" class="nav-item">
+                    <span class="nav-icon">📋</span> Inventory
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Reports
+                </a>
+                <a href="employees.html" class="nav-item">
+                    <span class="nav-icon">👥</span> Employees
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Transactions
+                </a>
+                <a href="low-stock.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span> Low Stock
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+                
+                <a href="danger-zone.html" class="nav-item">
+    <span class="nav-icon">☠️</span> Danger Zone
+</a>
+                
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-nav">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <h1 class="page-title">Categories</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <h3>Add New Category</h3>
+                <form id="categoryForm" style="display: flex; gap: 10px; margin-top: 15px;">
+                    <input type="text" id="categoryName" class="form-control" 
+                           placeholder="Category name" required style="flex: 1;">
+                    <input type="text" id="categoryDescription" class="form-control" 
+                           placeholder="Description (optional)" style="flex: 2;">
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category Name</th>
+                            <th>Description</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTable">
+                        <tr>
+                            <td colspan="4" class="text-center">Loading categories...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="../firebase-config.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/formatters.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/error-handler.js"></script>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+
+    <script src="../js/admin/categories.js"></script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = document.getElementById('mobileSidebarBackdrop');
+  if (!sidebar || !menuBtn || !backdrop) return;
+
+  const syncBackdrop = () => {
+    backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+  };
+
+  menuBtn.addEventListener('click', () => setTimeout(syncBackdrop, 0));
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    syncBackdrop();
+  });
+  window.addEventListener('resize', syncBackdrop);
+})();
+</script>
+
+</body>
+</html>

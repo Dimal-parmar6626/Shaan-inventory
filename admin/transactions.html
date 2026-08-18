@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Store Inventory</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/tables.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <div class="layout">
+        
+        <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📦</div>
+                <div class="sidebar-title">Inventory System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span> Products
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span> Categories
+                </a>
+                <a href="stock-in.html" class="nav-item">
+                    <span class="nav-icon">📥</span> Stock In
+                </a>
+                <a href="stock-out.html" class="nav-item">
+                    <span class="nav-icon">📤</span> Stock Out
+                </a>
+                <a href="inventory.html" class="nav-item">
+                    <span class="nav-icon">📋</span> Inventory
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Reports
+                </a>
+                <a href="employees.html" class="nav-item">
+                    <span class="nav-icon">👥</span> Employees
+                </a>
+                <a href="transactions.html" class="nav-item active">
+                    <span class="nav-icon">💳</span> Transactions
+                </a>
+                <a href="low-stock.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span> Low Stock
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+                <a href="danger-zone.html" class="nav-item">
+                    <span class="nav-icon">☠️</span> Danger Zone
+                </a>
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-nav">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <h1 class="page-title">Transactions</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end;">
+                    <div class="filter-group">
+                        <label class="form-label">Date Range</label>
+                        <select id="dateFilter" class="form-control">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last7days">Last 7 Days</option>
+                            <option value="last30days">Last 30 Days</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Type</label>
+                        <select id="typeFilter" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="IN">Stock IN</option>
+                            <option value="OUT">Stock OUT</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
+                    <button class="btn btn-success" id="exportExcelBtn" style="background: #059669;">
+                        📥 Export Excel
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="table" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Total Value</th>
+                            <th>Previous Stock</th>
+                            <th>New Stock</th>
+                            <th>User</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <tr>
+                            <td colspan="12" class="text-center">Loading transactions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <script src="../firebase-config.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/formatters.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/error-handler.js"></script>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+
+    <script src="../js/admin/transactions.js"></script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = document.getElementById('mobileSidebarBackdrop');
+  if (!sidebar || !menuBtn || !backdrop) return;
+
+  const syncBackdrop = () => {
+    backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+  };
+
+  menuBtn.addEventListener('click', () => setTimeout(syncBackdrop, 0));
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    syncBackdrop();
+  });
+  window.addEventListener('resize', syncBackdrop);
+})();
+</script>
+
+</body>
+</html>

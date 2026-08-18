@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Store Inventory</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <div class="layout">
+        <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📦</div>
+                <div class="sidebar-title">Inventory System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span> Products
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span> Categories
+                </a>
+                <a href="stock-in.html" class="nav-item">
+                    <span class="nav-icon">📥</span> Stock In
+                </a>
+                <a href="stock-out.html" class="nav-item">
+                    <span class="nav-icon">📤</span> Stock Out
+                </a>
+                <a href="inventory.html" class="nav-item">
+                    <span class="nav-icon">📋</span> Inventory
+                </a>
+                <a href="reports.html" class="nav-item active">
+                    <span class="nav-icon">📈</span> Reports
+                </a>
+                <a href="employees.html" class="nav-item">
+                    <span class="nav-icon">👥</span> Employees
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Transactions
+                </a>
+                <a href="low-stock.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span> Low Stock
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+                <a href="danger-zone.html" class="nav-item">
+                    <span class="nav-icon">☠️</span> Danger Zone
+                </a>
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-nav">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <h1 class="page-title">📈 Reports</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <div class="report-tabs-mobile" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button class="report-tab active" data-report="all" style="padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">📋 All Transactions</button>
+                <button class="report-tab" data-report="in" style="padding: 10px 20px; background: white; color: #059669; border: 2px solid #059669; border-radius: 6px; cursor: pointer; font-weight: bold;">📥 Stock IN</button>
+                <button class="report-tab" data-report="out" style="padding: 10px 20px; background: white; color: #dc2626; border: 2px solid #dc2626; border-radius: 6px; cursor: pointer; font-weight: bold;">📤 Stock OUT</button>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="report-filter-row" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end;">
+                    <div class="filter-group" style="flex: 1; min-width: 150px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: bold; color: #6b7280;">📅 Date Range</label>
+                        <select id="dateFilter" class="form-control" style="padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last7days">Last 7 Days</option>
+                            <option value="last30days">Last 30 Days</option>
+                            <option value="last2months">Last 2 Months</option>
+                            <option value="last3months">Last 3 Months</option>
+                            <option value="last6months">Last 6 Months</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group" id="customDateRange" style="display: none; flex: 1; min-width: 200px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: bold; color: #6b7280;">📅 Custom Range</label>
+                        <div class="report-custom-date-row" style="display: flex; gap: 5px; align-items: center;">
+                            <input type="date" id="startDate" class="form-control" style="flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <span style="color: #6b7280;">to</span>
+                            <input type="date" id="endDate" class="form-control" style="flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group" style="flex: 1; min-width: 150px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: bold; color: #6b7280;">👤 User Filter</label>
+                        <select id="userFilter" class="form-control" style="padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <option value="">All Users</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group" style="flex: 2; min-width: 200px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: bold; color: #6b7280;">🔍 Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search product, user, SKU..." style="padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    </div>
+                    
+                    <div class="report-filter-actions" style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="applyFilters" style="padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🔄 Apply Filters</button>
+                        <button class="btn btn-success" id="exportExcelBtn" style="padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">📥 Export Excel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-cards report-summary-grid" style="margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="card" style="background: #eff6ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 15px; text-align: center;">
+                    <div class="card-header" style="justify-content: center;">
+                        <span class="card-title" style="font-size: 12px; color: #6b7280;">Total Transactions</span>
+                        <div class="card-icon blue">💳</div>
+                    </div>
+                    <div class="card-value" id="totalTransactions" style="font-size: 24px; font-weight: bold; color: #1e40af;">0</div>
+                </div>
+                
+                <div class="card" style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 15px; text-align: center;">
+                    <div class="card-header" style="justify-content: center;">
+                        <span class="card-title" style="font-size: 12px; color: #6b7280;">Total Quantity</span>
+                        <div class="card-icon green">📊</div>
+                    </div>
+                    <div class="card-value" id="totalQuantity" style="font-size: 24px; font-weight: bold; color: #166534;">0</div>
+                </div>
+                
+                <div class="card" style="background: #fefce8; border: 2px solid #fef08a; border-radius: 8px; padding: 15px; text-align: center;">
+                    <div class="card-header" style="justify-content: center;">
+                        <span class="card-title" style="font-size: 12px; color: #6b7280;">Total Value</span>
+                        <div class="card-icon yellow">💰</div>
+                    </div>
+                    <div class="card-value" id="totalValue" style="font-size: 24px; font-weight: bold; color: #854d0e;">₹0</div>
+                </div>
+            </div>
+
+            <div class="table-container" style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow-x: auto;">
+                <table class="table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f9fafb;">
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">Date & Time</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">Product</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">Type</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">Quantity</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">Rate</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">Total Value</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 2px solid #e5e7eb;">User</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 20px; color: #6b7280;">Loading report...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <script src="../firebase-config.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/formatters.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/error-handler.js"></script>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+
+    <script src="../js/admin/reports.js"></script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = document.getElementById('mobileSidebarBackdrop');
+  if (!sidebar || !menuBtn || !backdrop) return;
+
+  const syncBackdrop = () => {
+    backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+  };
+
+  menuBtn.addEventListener('click', () => setTimeout(syncBackdrop, 0));
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    syncBackdrop();
+  });
+  window.addEventListener('resize', syncBackdrop);
+})();
+</script>
+
+</body>
+</html>

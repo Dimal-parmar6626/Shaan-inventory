@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees - Store Inventory</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <div class="layout">
+        
+        <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📦</div>
+                <div class="sidebar-title">Inventory System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span> Products
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span> Categories
+                </a>
+                <a href="stock-in.html" class="nav-item">
+                    <span class="nav-icon">📥</span> Stock In
+                </a>
+                <a href="stock-out.html" class="nav-item">
+                    <span class="nav-icon">📤</span> Stock Out
+                </a>
+                <a href="inventory.html" class="nav-item">
+                    <span class="nav-icon">📋</span> Inventory
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Reports
+                </a>
+                <a href="employees.html" class="nav-item active">
+                    <span class="nav-icon">👥</span> Employees
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Transactions
+                </a>
+                <a href="low-stock.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span> Low Stock
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+                
+                <a href="danger-zone.html" class="nav-item">
+    <span class="nav-icon">☠️</span> Danger Zone
+</a>
+                
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-nav">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <h1 class="page-title">Employees</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px; text-align: right;">
+                <button class="btn btn-success" id="addEmployeeBtn">+ Add Employee</button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeesTable">
+                        <tr>
+                            <td colspan="5" class="text-center">Loading employees...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="employeeModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Employee</h3>
+                <span class="modal-close" id="closeModal">&times;</span>
+            </div>
+            <form id="employeeForm">
+                <input type="hidden" id="employeeId">
+                
+                <div class="form-group">
+                    <label class="form-label">Name *</label>
+                    <input type="text" id="employeeName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" id="employeeEmail" class="form-control" required>
+                </div>
+                
+                <div class="form-group" id="passwordGroup">
+                    <label class="form-label">Password *</label>
+                    <input type="password" id="employeePassword" class="form-control" 
+                           minlength="6" required>
+                    <small class="form-text">Minimum 6 characters</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="employeeStatus" class="form-control">
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="../firebase-config.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/formatters.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/error-handler.js"></script>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+
+    <script src="../js/admin/employees.js"></script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = document.getElementById('mobileSidebarBackdrop');
+  if (!sidebar || !menuBtn || !backdrop) return;
+
+  const syncBackdrop = () => {
+    backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+  };
+
+  menuBtn.addEventListener('click', () => setTimeout(syncBackdrop, 0));
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    syncBackdrop();
+  });
+  window.addEventListener('resize', syncBackdrop);
+})();
+</script>
+
+</body>
+</html>

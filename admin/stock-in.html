@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock In - Store Inventory</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+        <link rel="stylesheet" href="../css/responsive.css">
+<style>
+        .bulk-stock-container {
+            margin-top: 20px;
+        }
+        
+        .bulk-product-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+        
+        .bulk-product-row:hover {
+            background: #f9fafb;
+        }
+        
+        .bulk-product-info {
+            flex: 2;
+            min-width: 150px;
+        }
+        
+        .bulk-product-name {
+            font-weight: bold;
+            display: block;
+        }
+        
+        .bulk-product-sku {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .bulk-product-stock {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .bulk-quantity-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .bulk-quantity-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .bulk-rate-input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .bulk-total {
+            font-weight: bold;
+            color: #4f46e5;
+            min-width: 80px;
+            text-align: right;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        
+        .bulk-summary {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .bulk-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .bulk-summary-item {
+            text-align: center;
+        }
+        
+        .bulk-summary-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .bulk-summary-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0369a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        
+        <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📦</div>
+                <div class="sidebar-title">Inventory System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span> Products
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span> Categories
+                </a>
+                <a href="stock-in.html" class="nav-item active">
+                    <span class="nav-icon">📥</span> Stock In
+                </a>
+                <a href="stock-out.html" class="nav-item">
+                    <span class="nav-icon">📤</span> Stock Out
+                </a>
+                <a href="inventory.html" class="nav-item">
+                    <span class="nav-icon">📋</span> Inventory
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Reports
+                </a>
+                <a href="employees.html" class="nav-item">
+                    <span class="nav-icon">👥</span> Employees
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Transactions
+                </a>
+                <a href="low-stock.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span> Low Stock
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+                <a href="danger-zone.html" class="nav-item">
+                    <span class="nav-icon">☠️</span> Danger Zone
+                </a>
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-nav">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <h1 class="page-title">Stock In</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" id="singleTab">Single Product</button>
+                <button class="tab-btn" id="bulkTab">Bulk Add (Category Wise)</button>
+            </div>
+
+            <div id="singleFormContainer">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Add Single Product</h2>
+                    </div>
+                    
+                    <form id="stockInForm">
+                        <div class="form-group">
+                            <label class="form-label">Product *</label>
+                            <select id="productSelect" class="form-control" required>
+                                <option value="">Loading products...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="product-info" id="productInfo" style="display: none; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Current Stock:</span>
+                                    <span class="info-value" id="currentStock">0</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">SKU:</span>
+                                    <span class="info-value" id="productSku">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Category:</span>
+                                    <span class="info-value" id="productCategory">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Quantity *</label>
+                            <input type="number" id="quantity" class="form-control" min="1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Rate (₹) *</label>
+                            <input type="number" id="rate" class="form-control" min="0" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Total Value</label>
+                            <div class="total-value-display" id="totalValue">₹0.00</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📝 Notes (Optional)</label>
+                            <textarea id="notes" class="form-control" rows="3" placeholder="Add notes..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success" style="width: 100%;">📥 Stock In</button>
+                    </form>
+                </div>
+            </div>
+
+<div id="bulkFormContainer" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2>Bulk Stock In - By Category</h2>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Select Category *</label>
+            <select id="bulkCategorySelect" class="form-control">
+                <option value="">Loading categories...</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">📝 Notes (Optional)</label>
+            <textarea id="bulkNotes" class="form-control" rows="2" placeholder="Add notes for all entries..."></textarea>
+        </div>
+        
+        <div id="bulkProductsList" style="margin-top: 20px;">
+            <p style="text-align: center; color: #6b7280;">Select a category to see products</p>
+        </div>
+    </div>
+</div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h2>Recent Stock In</h2>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>By</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentStockIn">
+                            <tr><td colspan="5" class="text-center">No transactions yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="../firebase-config.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/formatters.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/error-handler.js"></script>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/stock-operations.js"></script>
+
+    <script src="../js/admin/stock-in.js"></script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = document.getElementById('mobileSidebarBackdrop');
+  if (!sidebar || !menuBtn || !backdrop) return;
+
+  const syncBackdrop = () => {
+    backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+  };
+
+  menuBtn.addEventListener('click', () => setTimeout(syncBackdrop, 0));
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    syncBackdrop();
+  });
+  window.addEventListener('resize', syncBackdrop);
+})();
+</script>
+
+</body>
+</html>

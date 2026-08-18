@@ -1,0 +1,73 @@
+
+
+.filters-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group .form-label {
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.transaction-in {
+  color: #059669;
+  font-weight: 500;
+}
+
+.transaction-out {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.stock-increase {
+  color: #059669;
+}
+
+.stock-decrease {
+  color: #dc2626;
+}
+
+@media (max-width: 768px) {
+  .table {
+    font-size: 12px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 6px;
+  }
+  
+  .filters-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}

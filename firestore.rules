@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+match /databases/{database}/documents {
+
+function isSignedIn() {
+return request.auth != null;
+}
+
+function getUserData() {
+return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+}
+
+function isAdmin() {
+return isSignedIn() &&
+getUserData().role == 'admin' &&
+getUserData().active == true;
+}
+
+function isEmployee() {
+return isSignedIn() &&
+getUserData().role == 'employee' &&
+getUserData().active == true;
+}
+
+function isActiveUser() {
+return isSignedIn() &&
+getUserData().active == true;
+}
+
+match /users/{userId} {
+allow read: if isSignedIn() &&
+(request.auth.uid == userId || isAdmin());
+
+allow create: if isAdmin();
+
+allow update: if isAdmin() ||
+(request.auth.uid == userId && isActiveUser());
+
+allow delete: if isAdmin() && request.auth.uid != userId;
+}
+
+match /products/{productId} {
+allow read: if isActiveUser();
+
+allow create: if isAdmin();
+allow update: if isAdmin();
+allow delete: if isAdmin();
+}
+
+match /categories/{categoryId} {
+allow read: if isActiveUser();
+
+allow create: if isAdmin();
+allow update: if isAdmin();
+allow delete: if isAdmin();
+}
+
+match /stockTransactions/{transactionId} {
+allow read: if isActiveUser();
+
+allow create: if isActiveUser() && isValidTransaction();
+
+allow update: if false;
+allow delete: if false;
+}
+
+match /settings/{settingId} {
+allow read: if isActiveUser();
+
+allow write: if isAdmin();
+}
+
+function isValidTransaction() {
+let data = request.resource.data;
+let userData = getUserData();
+
+return data.userId == request.auth.uid &&
+data.userName == userData.name &&
+data.type in ['IN', 'OUT'] &&
+data.quantity is int &&
+data.quantity > 0 &&
+data.rate is number &&
+data.rate >= 0 &&
+data.totalValue == data.quantity * data.rate &&
+data.newStock == data.previousStock +
+(data.type == 'IN' ? data.quantity : -data.quantity) &&
+data.newStock >= 0;
+}
+}
+}

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danger Zone - Store Inventory</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+        <link rel="stylesheet" href="../css/responsive.css">
+<style>
+        .danger-zone-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .danger-card {
+            background: white;
+            border: 2px solid #fecaca;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .danger-card.critical {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        
+        .danger-card.warning {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .danger-card.specific {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .danger-title {
+            color: #dc2626;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .danger-description {
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .danger-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .danger-btn:hover {
+            background: #b91c1c;
+        }
+        
+        .warning-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .warning-btn:hover {
+            background: #d97706;
+        }
+        
+        .confirmation-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dc2626;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        .specific-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .specific-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            gap: 10px;
+        }
+        
+        .specific-item:hover {
+            background: #f9fafb;
+        }
+        
+        .delete-single-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .delete-single-btn:hover {
+            background: #b91c1c;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+        
+        .modal-text {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        
+        <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📦</div>
+                <div class="sidebar-title">Inventory System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span> Products
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span> Categories
+                </a>
+                <a href="stock-in.html" class="nav-item">
+                    <span class="nav-icon">📥</span> Stock In
+                </a>
+                <a href="stock-out.html" class="nav-item">
+                    <span class="nav-icon">📤</span> Stock Out
+                </a>
+                <a href="inventory.html" class="nav-item">
+                    <span class="nav-icon">📋</span> Inventory
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Reports
+                </a>
+                <a href="employees.html" class="nav-item">
+                    <span class="nav-icon">👥</span> Employees
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Transactions
+                </a>
+                <a href="low-stock.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span> Low Stock
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+                <a href="danger-zone.html" class="nav-item active">
+                    <span class="nav-icon">☠️</span> Danger Zone
+                </a>
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-nav">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <h1 class="page-title">☠️ Danger Zone</h1>
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <div class="danger-zone-container">
+                
+                <div style="background: #dc2626; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <strong>⚠️ WARNING: This area contains destructive actions that cannot be undone!</strong>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="statProducts">0</div>
+                        <div class="stat-label">Products</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="statCategories">0</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="statTransactions">0</div>
+                        <div class="stat-label">Transactions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="statEmployees">0</div>
+                        <div class="stat-label">Employees</div>
+                    </div>
+                </div>
+
+                <div class="danger-card specific">
+                    <div class="danger-title" style="color: #3b82f6;">
+                        🎯 Delete Specific Entries
+                    </div>
+                    <div class="danger-description">
+                        Select and delete individual transactions, products, or categories.
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary btn-sm" id="showTransactionsTab" style="background: #3b82f6;">Transactions</button>
+                        <button class="btn btn-secondary btn-sm" id="showProductsTab">Products</button>
+                        <button class="btn btn-secondary btn-sm" id="showCategoriesTab">Categories</button>
+                    </div>
+
+                    <input type="text" class="search-box" id="specificSearch" placeholder="Search...">
+
+                    <div class="specific-list" id="specificList">
+                        <p style="text-align: center; color: #6b7280;">Select a tab to view entries</p>
+                    </div>
+                </div>
+
+                <div class="danger-card critical">
+                    <div class="danger-title">
+                        🗑️ Clear All Transaction Logs
+                    </div>
+                    <div class="danger-description">
+                        This will permanently delete ALL stock transaction history (Stock IN and Stock OUT records).
+                    </div>
+                    <button class="danger-btn" id="clearTransactionsBtn">
+                        Clear All Transactions
+                    </button>
+                </div>
+
+                <div class="danger-card warning">
+                    <div class="danger-title">
+                        📥 Clear Stock IN Logs Only
+                    </div>
+                    <div class="danger-description">
+                        This will delete only Stock IN transaction records.
+                    </div>
+                    <button class="warning-btn" id="clearStockInBtn">
+                        Clear Stock IN Logs
+                    </button>
+                </div>
+
+                <div class="danger-card warning">
+                    <div class="danger-title">
+                        📤 Clear Stock OUT Logs Only
+                    </div>
+                    <div class="danger-description">
+                        This will delete only Stock OUT transaction records.
+                    </div>
+                    <button class="warning-btn" id="clearStockOutBtn">
+                        Clear Stock OUT Logs
+                    </button>
+                </div>
+
+                <div class="danger-card critical">
+                    <div class="danger-title">
+                        📦 Delete All Products
+                    </div>
+                    <div class="danger-description">
+                        This will permanently delete ALL products from the inventory.
+                    </div>
+                    <button class="danger-btn" id="deleteProductsBtn">
+                        Delete All Products
+                    </button>
+                </div>
+
+                <div class="danger-card critical">
+                    <div class="danger-title">
+                        🏷️ Delete All Categories
+                    </div>
+                    <div class="danger-description">
+                        This will permanently delete ALL categories.
+                    </div>
+                    <button class="danger-btn" id="deleteCategoriesBtn">
+                        Delete All Categories
+                    </button>
+                </div>
+
+                <div class="danger-card critical" style="border-width: 3px;">
+                    <div class="danger-title">
+                        ☠️ NUKE EVERYTHING - Clear All Data
+                    </div>
+                    <div class="danger-description">
+                        This will delete ALL data including products, categories, AND all transaction logs.
+                    </div>
+                    <button class="danger-btn" id="nukeAllBtn" style="background: #7f1d1d;">
+                        Delete All Inventory Data
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Confirm Action</div>
+            <div class="modal-text" id="modalText">Are you sure?</div>
+            <input type="text" class="confirmation-input" id="confirmInput" 
+                   placeholder="Type DELETE to confirm">
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                <button class="danger-btn" id="confirmBtn" disabled>Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="../firebase-config.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/formatters.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/error-handler.js"></script>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+
+    <script src="../js/admin/danger-zone.js"></script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = document.getElementById('mobileSidebarBackdrop');
+  if (!sidebar || !menuBtn || !backdrop) return;
+
+  const syncBackdrop = () => {
+    backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+  };
+
+  menuBtn.addEventListener('click', () => setTimeout(syncBackdrop, 0));
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    syncBackdrop();
+  });
+  window.addEventListener('resize', syncBackdrop);
+})();
+</script>
+
+</body>
+</html>
